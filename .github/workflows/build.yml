@@ -28,8 +28,8 @@ jobs:
           curl -LO https://socketzero-public.s3.us-gov-west-1.amazonaws.com/receiver/v$GITHUB_REF_NAME/socketzero-receiver-linux-amd64-v$GITHUB_REF_NAME
           mv socketzero-receiver-linux-amd64-v$GITHUB_REF_NAME socketzero-receiver
           set +o history && echo ${REGISTRY1_PASSWORD} | docker login registry1.dso.mil --username ${REGISTRY1_USERNAME} --password-stdin || set -o history
-          docker build -t ghcr.io/${{ github.repository_owner }}/socketzero-receiver:$GITHUB_REF_NAME .
-          docker push ghcr.io/${{ github.repository_owner }}/socketzero-receiver:$GITHUB_REF_NAME
+          docker build -t ghcr.io/radiusmethod/socketzero-receiver:$GITHUB_REF_NAME .
+          docker push ghcr.io/radiusmethod/socketzero-receiver:$GITHUB_REF_NAME
         env:
           SOCKETZERO_RECEIVER_VERSION: 0.0.2
           REGISTRY1_USERNAME: ${{ secrets.REGISTRY1_USERNAME }}
