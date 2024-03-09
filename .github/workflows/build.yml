@@ -1,0 +1,34 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      GOPRIVATE: github.com/radiusmethod/license
+      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: "Login to GHCR"
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build and push Docker image
+        run: |
+          curl -LO https://socketzero-public.s3.us-gov-west-1.amazonaws.com/receiver/v0.0.2/socketzero-receiver-linux-amd64-v0.0.2
+          set +o history && echo ${REGISTRY1_PASSWORD} | docker login registry1.dso.mil --username ${REGISTRY1_USERNAME} --password-stdin || set -o history
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:$GITHUB_REF_NAME .
+          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:$GITHUB_REF_NAME
+        env:
+          REGISTRY1_USERNAME: ${{ secrets.REGISTRY1_USERNAME }}
+          REGISTRY1_PASSWORD: ${{ secrets.REGISTRY1_PASSWORD }}
